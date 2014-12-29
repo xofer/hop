@@ -17,6 +17,7 @@
 """Setup script for hop."""
 
 import os.path
+from os import makedirs
 import sys
 
 from setuptools import setup
@@ -50,9 +51,18 @@ class hop_install(install_data.install_data):
     # First check if the reference to hop.bash is already installed.
     with open(bashrc_path, "r") as f:
       bashrc_content = f.read()
-      for k in required_commands.keys():
-        if k in bashrc_content:
-          del required_commands[k]
+      if '.bashrc.d' in bashrc_content:
+        bashrc_dir = os.path.expanduser('~/.bashrc.d')
+        if not os.path.isdir(bashrc_dir):
+          makedirs(bashrc_dir, 0750)
+        bashrc_path = '{}/hop'.format(bashrc_dir)
+        bashrc_content = ''
+        if os.path.isfile(bashrc_path):
+          with open(bashrc_path, "r") as f2:
+            bashrc_content = f2.read()
+    for k in required_commands.keys():
+      if k in bashrc_content:
+        del required_commands[k]
 
     if required_commands:
       with open(bashrc_path, "a") as f:
