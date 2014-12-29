@@ -31,52 +31,6 @@ class hop_install(install_data.install_data):
   def run(self):
     """Install commands and dotfiles."""
     install_data.install_data.run(self)
-
-
-    bash_options = ('~/.bashrc', '~/.bash_profile')
-    bashrc_path = None
-    for bash in bash_options:
-      expanded = os.path.expanduser(bash)
-      if os.path.isfile(expanded):
-        bashrc_path = expanded
-        break
-
-    ### https://github.com/Cue/hop/pull/5
-    self.set_undefined_options('install',
-                               ('install_data', 'install_dir'))
-    prefix = os.path.join(self.install_dir, 'hop')
-    ###
-
-    required_commands = {
-      '/hop.bash':"# Initialize the 'hop' script\n source %s" % os.path.join(prefix, 'hop.bash'),
-      'hop-lua-script':'# Define an entry point for the lua script version of hop\n'
-                       'alias hop-lua-script="LUA_PATH=%s %s"' % (os.path.join(prefix, 'json.lua'),
-                                                                  os.path.join(prefix, 'hop.lua'))
-    }
-    # First check if the reference to hop.bash is already installed.
-    with open(bashrc_path, "r") as f:
-      bashrc_content = f.read()
-      if '.bashrc.d' in bashrc_content:
-        bashrc_dir = os.path.expanduser('~/.bashrc.d')
-        if not os.path.isdir(bashrc_dir):
-          makedirs(bashrc_dir, 0750)
-        bashrc_path = '{}/hop'.format(bashrc_dir)
-        bashrc_content = ''
-        if os.path.isfile(bashrc_path):
-          with open(bashrc_path, "r") as f2:
-            bashrc_content = f2.read()
-    for k in required_commands.keys():
-      if k in bashrc_content:
-        del required_commands[k]
-
-    if required_commands:
-      with open(bashrc_path, "a") as f:
-        for v in required_commands.values():
-          f.write(v + '\n')
-
-    print
-    print "Done.  Now type '. ~/.bashrc'.  Then type 'hop'."
-
     return True
 
 
