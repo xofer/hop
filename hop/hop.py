@@ -174,7 +174,7 @@ def command_convert(*_):
       x[k] = db[k]
 
     with open(os.path.expanduser('~/.hop.json.db'), 'w') as f:
-      f.write(json.dumps(x))
+      f.write(json.dumps(x, indent=4))
   return True
 
 
@@ -302,7 +302,7 @@ class JsonDbm(object):
   def _write(self, values):
     """Write the file to disk"""
     with open(self._path, 'w') as f:
-      f.write(json.dumps(values))
+      f.write(json.dumps(values, indent=4))
 
 
   def __getitem__(self, item):
