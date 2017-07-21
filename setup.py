@@ -17,7 +17,6 @@
 """Setup script for hop."""
 
 import os.path
-from os import makedirs
 import sys
 
 from setuptools import setup
